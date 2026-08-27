@@ -15,29 +15,30 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # Step 1: CLAUDE.md
+mkdir -p "$CLAUDE_DIR"
 if [ -f "$CLAUDE_DIR/CLAUDE.md" ]; then
     echo "Found existing CLAUDE.md — backing up to CLAUDE.md.backup"
     cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.backup"
 fi
 
 cp "$SCRIPT_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
-echo "[1/6] CLAUDE.md installed"
+echo "[1/7] CLAUDE.md installed"
 
 # Step 2: Templates
 TEMPLATE_DIR="$CLAUDE_DIR/templates/shipstack"
 mkdir -p "$TEMPLATE_DIR/memory"
 cp "$SCRIPT_DIR/templates/"*.md "$TEMPLATE_DIR/" 2>/dev/null || true
 cp "$SCRIPT_DIR/templates/memory/"*.md "$TEMPLATE_DIR/memory/" 2>/dev/null || true
-echo "[2/6] Templates installed"
+echo "[2/7] Templates installed"
 
 # Step 3: Hooks
 HOOKS_DIR="$CLAUDE_DIR/hooks"
 mkdir -p "$HOOKS_DIR"
 cp "$SCRIPT_DIR/hooks/session-start-vault.sh" "$HOOKS_DIR/"
-cp "$SCRIPT_DIR/hooks/session-end-journal.sh" "$HOOKS_DIR/"
+cp "$SCRIPT_DIR/hooks/session-stop-vault.sh" "$HOOKS_DIR/"
 cp "$SCRIPT_DIR/hooks/guard.sh" "$HOOKS_DIR/"
 chmod +x "$HOOKS_DIR/"*.sh
-echo "[3/6] Hooks installed (session-start, session-end, guard)"
+echo "[3/7] Hooks installed (session-start, session-stop, guard)"
 
 # Step 4: Skills (symlink)
 SKILLS_DIR="$CLAUDE_DIR/skills/shipstack"
@@ -50,9 +51,26 @@ if [ -d "$SKILLS_DIR" ]; then
 fi
 mkdir -p "$CLAUDE_DIR/skills"
 ln -s "$SCRIPT_DIR/skills/shipstack" "$SKILLS_DIR"
-echo "[4/6] Skills symlinked ($SKILLS_DIR → $SCRIPT_DIR/skills/shipstack)"
+echo "[4/7] Skills symlinked ($SKILLS_DIR → $SCRIPT_DIR/skills/shipstack)"
 
-# Step 5: Pipeline directory (~/.shipstack/)
+# Step 5: Commands (~/.claude/commands/)
+# A skill's typed command name comes from the folder directly inside
+# ~/.claude/skills/. ShipStack's skills sit one folder deeper than that
+# (skills/shipstack/<name>/SKILL.md), which hides them from typing and
+# from Claude's own skill search. A per-skill link in ~/.claude/commands/
+# takes its name from the file itself, not folder depth, so it works.
+COMMANDS_DIR="$CLAUDE_DIR/commands"
+mkdir -p "$COMMANDS_DIR"
+command_count=0
+for skill_path in "$SKILLS_DIR"/*/SKILL.md; do
+    [ -e "$skill_path" ] || continue
+    skill_name="$(basename "$(dirname "$skill_path")")"
+    ln -sf "$skill_path" "$COMMANDS_DIR/$skill_name.md"
+    command_count=$((command_count + 1))
+done
+echo "[5/7] Commands linked ($command_count skills → $COMMANDS_DIR)"
+
+# Step 6: Pipeline directory (~/.shipstack/)
 mkdir -p "$SHIPSTACK_DIR/projects" "$SHIPSTACK_DIR/analytics"
 
 # Create default config if none exists
@@ -63,7 +81,7 @@ if [ ! -f "$SHIPSTACK_DIR/config.yaml" ]; then
 
 # Path to your knowledge vault (Obsidian, plain markdown, etc.)
 # Skills read past mistakes, decisions, and session journals from here.
-vault_path: ~/knowledge
+vault_path: ~/ProductBrain/Projects
 
 # Default scope mode for new sessions (EXPAND, SELECTIVE, HOLD, REDUCE)
 default_scope_mode: HOLD
@@ -71,13 +89,13 @@ default_scope_mode: HOLD
 # Enable PreToolUse guard hook for scope enforcement
 guard_enabled: true
 YAML
-    echo "[5/6] Pipeline directory created with default config"
+    echo "[6/7] Pipeline directory created with default config"
 else
-    echo "[5/6] Pipeline directory exists — config preserved"
+    echo "[6/7] Pipeline directory exists — config preserved"
 fi
 
-# Step 6: Summary
-echo "[6/6] Setup complete!"
+# Step 7: Summary
+echo "[7/7] Setup complete!"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Next steps"
@@ -93,7 +111,7 @@ echo ""
 echo "  3. Start a session and try the pipeline:"
 echo "     /brainstorm → /challenge → /review-plan → [build] → /review → /ship-check → /retro"
 echo ""
-echo "  Skills available: /brainstorm /challenge /review-plan /investigate /review /ship-check /retro"
+echo "  Skills available: /brainstorm /challenge /review-plan /investigate /review /ship-check /ship-feature /retro"
 echo ""
 echo "For more: https://github.com/shravan-swagwalapm/shipstack"
 echo ""

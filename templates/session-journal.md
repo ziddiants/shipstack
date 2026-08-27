@@ -8,8 +8,17 @@ tags: [claude-session]
 
 # Session: {{title}}
 
+<!--
+Write this note in plain, simple language (see the simple-english skill,
+ASD-STE100 pragmatic mode) — short sentences, one idea per sentence, active
+voice. A non-technical reader must be able to follow it. Name a technical
+term once, then explain it in plain words. Ground each point in what
+actually happened this session, not in the abstract. Keep code, paths,
+commands, and quoted errors exact.
+-->
+
 ## Goal
-> What did you set out to accomplish this session?
+> What did you set out to do this session?
 
 ## What We Built
 -

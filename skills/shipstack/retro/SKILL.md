@@ -88,42 +88,54 @@ Trends:
 ## Step 4: Automatic Knowledge Capture
 
 ### Session Journal
-Write a session journal to `$vault_path/$SLUG/Sessions.md` (append):
+Write this note in plain, simple language (simple-english skill, pragmatic mode) — short sentences, one idea per sentence, active voice, a technical term explained the first time you use it, each point grounded in what actually happened this session. Keep code, paths, commands, and quoted errors exact.
+
+Create `$vault_path/$SLUG/Sessions/YYYY-MM-DD.md` from the session-journal template (suffix `-2`, `-3` if a session file for today already exists):
 
 ```markdown
 ---
-## Session: YYYY-MM-DD
+type: session
+project: "$SLUG"
+date: "YYYY-MM-DD"
+duration:
+tags: [claude-session]
+---
 
-**Period**: [start] to [end]
-**Commits**: [N]
-**Lines**: [+added/-removed]
+# Session: [title]
 
-### What We Built
+## Goal
+[what this session set out to accomplish]
+
+## What We Built
 [list of features/fixes from git log]
 
-### Key Decisions
+## Key Decisions Made
 [any decisions made during this period]
 
-### Bugs Fixed
+## Bugs Fixed
 [from investigation reports]
 
-### Learnings
+## Learnings
 [from eureka log + retro analysis]
 
-### What I'd Do Differently
+## Mistakes / What I'd Do Differently
 [from retro analysis]
 ```
+
+Then prepend a one-line entry to `$vault_path/$SLUG/Sessions.md` (the index): `- [[Sessions/YYYY-MM-DD|YYYY-MM-DD]] — one-line summary`
 
 ### Extract New Past Mistakes
 If any bugs were investigated during this period (check `investigations/`):
 - Read each investigation report
 - If the bug represents a CLASS of error not already in past mistakes:
-  - Append to `$vault_path/$SLUG/Past Mistakes & Lessons.md`
+  - Append to `$vault_path/$SLUG/Past Mistakes and Lessons.md`
   - Tell the user: "New past mistake added: '[rule]'. Future reviews will check for this pattern."
 
 ### Update Decisions
 If any architectural decisions were made (from challenge docs or retro discussion):
-- Append to `$vault_path/$SLUG/Decisions.md`
+- Determine the next ADR number (count of existing files in `$vault_path/$SLUG/Decisions/` + 1, zero-padded to 3 digits)
+- Create `$vault_path/$SLUG/Decisions/NNN-YYYY-MM-DD-<kebab-case-title>.md` from the decision-record template, with `session: "[[../Sessions/YYYY-MM-DD]]"` in its frontmatter, written in plain, simple language (simple-english skill, pragmatic mode)
+- Prepend a one-line entry to `$vault_path/$SLUG/Decisions.md` (the index): `- [[Decisions/NNN-YYYY-MM-DD-title|NNN: Title]] — one-line summary (date)`
 
 ## Step 5: Update Handoff
 

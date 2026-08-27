@@ -27,6 +27,13 @@ fi
 # Export slug for Claude
 echo "export SHIPSTACK_SLUG=$SLUG" >> "$CLAUDE_ENV_FILE"
 
+# Stamp session-start time and reset the stop-hook nudge counter.
+# session-stop-vault.sh uses these to detect "work happened this session"
+# and to cap how many times it'll block a stop before giving up.
+mkdir -p "$HOME/.shipstack/projects/$SLUG"
+date +%s > "$HOME/.shipstack/projects/$SLUG/.session-start-ts"
+rm -f "$HOME/.shipstack/projects/$SLUG/.stop-nudge-count"
+
 # Check for handoff from prior session
 HANDOFF="$HOME/.shipstack/projects/$SLUG/handoff.md"
 if [ -f "$HANDOFF" ]; then

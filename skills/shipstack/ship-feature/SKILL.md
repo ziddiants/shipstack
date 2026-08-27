@@ -140,7 +140,7 @@ Invoke ShipStack `/retro` via the Skill tool. This runs automatically after GO â
 The retro skill will:
 - Detect work sessions from git log
 - Aggregate eureka insights from the pipeline
-- Write session journal to vault (`$vault_path/$SLUG/Sessions.md`)
+- Write session journal to vault (`$vault_path/$SLUG/Sessions/YYYY-MM-DD.md` + index)
 - Extract new past mistakes to vault
 - Update decisions in vault
 - Update `handoff.md` for session continuity

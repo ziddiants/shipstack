@@ -122,7 +122,7 @@ Write investigation report to `~/.shipstack/projects/$SLUG/investigations/YYYY-M
 ### Extract Past Mistake
 
 If this bug represents a CLASS of error (not just a one-off):
-- Append to `$vault_path/$SLUG/Past Mistakes & Lessons.md`:
+- Append to `$vault_path/$SLUG/Past Mistakes and Lessons.md`, written in plain, simple language (simple-english skill, pragmatic mode) — a non-technical reader must be able to follow what went wrong and why the rule prevents it:
   ```
   ## [Category]: [Rule title]
   **Mistake**: [What happened]

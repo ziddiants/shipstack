@@ -2,7 +2,7 @@
 
 ## BOOT — Always First
 
-Read project knowledge folder → Architecture, Past Mistakes, Decisions, latest Sessions. Find project CLAUDE.md or ask.
+Read project knowledge folder → PRD, Architecture, Past Mistakes, Decisions, latest Sessions. Find project CLAUDE.md or ask.
 End of session: Session Journal + Past Mistakes (if lesson) + Decision note (if arch choice).
 
 ---

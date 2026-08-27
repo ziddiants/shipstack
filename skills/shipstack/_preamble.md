@@ -5,7 +5,7 @@ Before executing this skill, perform these setup steps silently (do not print pr
 ## 1. Load Config
 
 Read `~/.shipstack/config.yaml`. If it doesn't exist, use these defaults:
-- `vault_path`: `~/knowledge` (user's knowledge folder)
+- `vault_path`: `~/ProductBrain/Projects` (user's knowledge vault)
 - `default_scope_mode`: `HOLD`
 - `guard_enabled`: `true`
 
@@ -35,10 +35,12 @@ If `~/.shipstack/projects/$SLUG/handoff.md` exists, read it. Note:
 
 ## 5. Load Knowledge (from vault)
 
-Using `vault_path` from config:
-1. Read `$vault_path/$SLUG/Past Mistakes & Lessons.md` (if exists) — store as `$PAST_MISTAKES`
-2. Read `$vault_path/$SLUG/Decisions.md` (if exists) — store as `$DECISIONS`
-3. Read `$vault_path/$SLUG/Sessions.md` (if exists, last entry only) — store as `$LAST_SESSION`
+Using `vault_path` from config, project folder is `$vault_path/$SLUG/`:
+1. Read `PRD.md` (if exists) in full — store as `$PRD`. This is the spec source of truth for drift checks.
+2. Read `Architecture.md` (if exists) in full — store as `$ARCHITECTURE`
+3. Read `Past Mistakes and Lessons.md` (if exists) in full — store as `$PAST_MISTAKES`
+4. Read `Decisions.md` (the index, if exists) — store as `$DECISIONS`. Also read the single most-recently-added file it links to under `Decisions/` for full detail.
+5. Read `Sessions.md` (the index, if exists) — store as `$SESSIONS`. Also read the single most-recently-added file it links to under `Sessions/` — store as `$LAST_SESSION`.
 
 If the vault path or project folder doesn't exist, that's fine — proceed without knowledge context. Skills still work, just without accumulated knowledge.
 

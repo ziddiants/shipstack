@@ -40,6 +40,10 @@ If found, cross-reference EVERY planned item against the actual diff:
 
 If no upstream artifacts exist, skip scope drift detection silently.
 
+### PRD Drift Check
+
+If `$PRD` was loaded (from the vault's `PRD.md`), cross-reference the diff against its numbered Requirements the same way — one row per requirement, same DONE/PARTIAL/NOT DONE/UNPLANNED classification. This is spec drift, not scope drift: it catches the diff quietly implementing something the PRD doesn't ask for, or claiming to ship something the PRD requires that isn't actually there. If no `PRD.md` was loaded, skip this silently.
+
 ## Step 3: Two-Pass Review
 
 ### Pass 1: CRITICAL (do this first, completely, before Pass 2)
