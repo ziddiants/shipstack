@@ -136,7 +136,7 @@ If any new architectural decisions were made during the challenge:
 - Determine the next ADR number (count of existing files in `$vault_path/$SLUG/Decisions/` + 1, zero-padded to 3 digits)
 - Create `$vault_path/$SLUG/Decisions/NNN-YYYY-MM-DD-<kebab-case-title>.md` from the decision-record template, with `session: "[[../Sessions/YYYY-MM-DD]]"` in its frontmatter
 - Prepend a one-line entry to `$vault_path/$SLUG/Decisions.md` (the index): `- [[Decisions/NNN-YYYY-MM-DD-title|NNN: Title]] — one-line summary (date)`
-- Write it in plain, simple language (simple-english skill, pragmatic mode) — see the template's own comment for the full rule
+- Write it in plain, simple language — see the template's own comment for the full rule (the simple-english skill's pragmatic mode adds extra rigor if it's installed)
 
 ## Step 10: Next Step
 

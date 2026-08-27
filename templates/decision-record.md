@@ -12,12 +12,12 @@ tags: [decision]
 # Decision: {{title}}
 
 <!--
-Write this note in plain, simple language (see the simple-english skill,
-ASD-STE100 pragmatic mode) — short sentences, one idea per sentence, active
-voice. A non-technical reader must be able to follow it. Name a technical
-term once, then explain it in plain words. Ground each point in what
-actually happened this session, not in the abstract. Keep code, paths,
-commands, and quoted errors exact.
+Write this note in plain, simple language — short sentences, one idea per
+sentence, active voice. A non-technical reader must be able to follow it.
+Name a technical term once, then explain it in plain words. Ground each
+point in what actually happened this session, not in the abstract. Keep
+code, paths, commands, and quoted errors exact. (If the simple-english
+skill is installed, apply its ASD-STE100 pragmatic mode for extra rigor.)
 
 Filename: {{NNN}}-{{date}}-kebab-case-title.md — the number keeps ADRs in
 order, the date lets you see when a decision happened without opening it.

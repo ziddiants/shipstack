@@ -88,7 +88,7 @@ Trends:
 ## Step 4: Automatic Knowledge Capture
 
 ### Session Journal
-Write this note in plain, simple language (simple-english skill, pragmatic mode) — short sentences, one idea per sentence, active voice, a technical term explained the first time you use it, each point grounded in what actually happened this session. Keep code, paths, commands, and quoted errors exact.
+Write this note in plain, simple language — short sentences, one idea per sentence, active voice, a technical term explained the first time you use it, each point grounded in what actually happened this session. Keep code, paths, commands, and quoted errors exact. (If the simple-english skill is installed, apply its pragmatic mode.)
 
 Create `$vault_path/$SLUG/Sessions/YYYY-MM-DD.md` from the session-journal template (suffix `-2`, `-3` if a session file for today already exists):
 
@@ -134,7 +134,7 @@ If any bugs were investigated during this period (check `investigations/`):
 ### Update Decisions
 If any architectural decisions were made (from challenge docs or retro discussion):
 - Determine the next ADR number (count of existing files in `$vault_path/$SLUG/Decisions/` + 1, zero-padded to 3 digits)
-- Create `$vault_path/$SLUG/Decisions/NNN-YYYY-MM-DD-<kebab-case-title>.md` from the decision-record template, with `session: "[[../Sessions/YYYY-MM-DD]]"` in its frontmatter, written in plain, simple language (simple-english skill, pragmatic mode)
+- Create `$vault_path/$SLUG/Decisions/NNN-YYYY-MM-DD-<kebab-case-title>.md` from the decision-record template, with `session: "[[../Sessions/YYYY-MM-DD]]"` in its frontmatter, written in plain, simple language (see the decision-record template's own comment for the full rule)
 - Prepend a one-line entry to `$vault_path/$SLUG/Decisions.md` (the index): `- [[Decisions/NNN-YYYY-MM-DD-title|NNN: Title]] — one-line summary (date)`
 
 ## Step 5: Update Handoff
