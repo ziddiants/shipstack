@@ -37,6 +37,7 @@ v2.0 adds 7 pipeline skills that chain together via filesystem artifacts. Every 
 | `/review` | Staff Engineer | Scope drift detection, past-mistakes-as-checklist, adversarial scaling |
 | `/ship-check` | Release Engineer | Readiness dashboard, staleness detection, GO/NO-GO |
 | `/retro` | Eng Manager | Session detection, eureka aggregation, auto knowledge capture |
+| `/ship-feature` | Tech Lead | Orchestrates the full pipeline: design → plan → build → review → ship |
 
 The key differentiator: **every skill reads past mistakes from your vault.** A code review that knows "we got burned by `.single()` last month" is categorically different from a generic review.
 
@@ -248,18 +249,23 @@ shipstack/
 │       ├── investigate/SKILL.md # 4-phase debugging + scope lock
 │       ├── review/SKILL.md      # Code review + past-mistakes checklist
 │       ├── ship-check/SKILL.md  # Readiness dashboard + staleness
-│       └── retro/SKILL.md       # Retrospective + knowledge capture
+│       ├── retro/SKILL.md       # Retrospective + knowledge capture
+│       └── ship-feature/SKILL.md # Full-pipeline orchestrator (design → ship)
 ├── templates/
 │   ├── MEMORY.md                # Memory index template
 │   ├── handoff.md               # Session handoff template (v2.0)
 │   ├── memory/                  # Example memory files
+│   ├── prd.md                   # PRD template
+│   ├── architecture.md          # Architecture note template
 │   ├── session-journal.md       # Session journal template
+│   ├── sessions-index.md        # Sessions index template
 │   ├── decision-record.md       # ADR template
+│   ├── decisions-index.md       # Decisions index template
 │   ├── past-mistakes.md         # Mistake → rule template
 │   └── project-claude.md        # Per-project CLAUDE.md template
 ├── hooks/
 │   ├── session-start-vault.sh   # Boot hook (v2.0: handoff + pipeline context)
-│   ├── session-end-journal.sh   # End-of-session hook (v2.0: suggests /retro)
+│   ├── session-stop-vault.sh    # Stop hook: enforces session journal when code changed
 │   ├── guard.sh                 # PreToolUse scope enforcement (v2.0)
 │   └── settings-snippet.json    # Copy-paste for settings.json
 ├── playbooks/                   # Production-tested patterns
