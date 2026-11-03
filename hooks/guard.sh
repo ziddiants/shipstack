@@ -46,10 +46,12 @@ case "$FILE_PATH" in
         exit 0  # Within scope, allow
         ;;
     *)
-        # Output JSON to block the operation
-        cat <<BLOCK
-{"decision":"block","reason":"BLOCKED by shipstack guard: Edit outside scope.\n  Scope: $SCOPE_DIR\n  Target: $FILE_PATH\n  To remove scope lock: delete ~/.shipstack/freeze-scope.txt"}
-BLOCK
+        # Output JSON to block the operation (current PreToolUse format)
+        REASON="BLOCKED by shipstack guard: Edit outside scope.
+  Scope: $SCOPE_DIR
+  Target: $FILE_PATH
+  To remove scope lock: delete ~/.shipstack/freeze-scope.txt"
+        jq -n --arg reason "$REASON" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $reason}}'
         exit 0
         ;;
 esac

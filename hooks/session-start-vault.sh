@@ -6,8 +6,8 @@
 # Install: Add to ~/.claude/settings.json under "hooks.SessionStart"
 # See: hooks/settings-snippet.json
 
-# Add local binaries to PATH
-echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$CLAUDE_ENV_FILE"
+# Add local binaries to PATH (only when Claude Code gave us an env file to write)
+[ -n "${CLAUDE_ENV_FILE:-}" ] && echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$CLAUDE_ENV_FILE"
 
 # Ensure shipstack directory exists
 mkdir -p "$HOME/.shipstack/projects" "$HOME/.shipstack/analytics"
@@ -24,8 +24,8 @@ if [ -z "$SLUG" ]; then
     SLUG=$(basename "$(pwd)")
 fi
 
-# Export slug for Claude
-echo "export SHIPSTACK_SLUG=$SLUG" >> "$CLAUDE_ENV_FILE"
+# Export slug for Claude (only when an env file is present)
+[ -n "${CLAUDE_ENV_FILE:-}" ] && echo "export SHIPSTACK_SLUG=$SLUG" >> "$CLAUDE_ENV_FILE"
 
 # Stamp session-start time and reset the stop-hook nudge counter.
 # session-stop-vault.sh uses these to detect "work happened this session"
@@ -34,13 +34,41 @@ mkdir -p "$HOME/.shipstack/projects/$SLUG"
 date +%s > "$HOME/.shipstack/projects/$SLUG/.session-start-ts"
 rm -f "$HOME/.shipstack/projects/$SLUG/.stop-nudge-count"
 
-# Check for handoff from prior session
+# Resolve the vault project folder, the same way session-stop-vault.sh does.
+VAULT_PATH="~/ProductBrain/Projects"
+SS_CONFIG="$HOME/.shipstack/config.yaml"
+if [ -f "$SS_CONFIG" ]; then
+    CONFIGURED=$(grep "^vault_path:" "$SS_CONFIG" | sed 's/^vault_path:[[:space:]]*//')
+    [ -n "$CONFIGURED" ] && VAULT_PATH="$CONFIGURED"
+fi
+VAULT_PATH="${VAULT_PATH/#\~/$HOME}"
+PROJECT_DIR="$VAULT_PATH/$SLUG"
+
+# Auto-load the prior session handoff, if one exists. Its content (not just a
+# reminder) is printed, so it enters the session context automatically.
 HANDOFF="$HOME/.shipstack/projects/$SLUG/handoff.md"
 if [ -f "$HANDOFF" ]; then
-    echo "shipstack: Prior session handoff found for '$SLUG'."
-    echo "Read ~/.shipstack/projects/$SLUG/handoff.md to resume where you left off."
+    NOW=$(date +%s)
+    MT=$(stat -f %m "$HANDOFF" 2>/dev/null || echo "$NOW")
+    AGE_DAYS=$(( (NOW - MT) / 86400 ))
+    echo "shipstack: Prior session handoff for '$SLUG' (updated ${AGE_DAYS}d ago), loaded below."
+    echo "----- BEGIN HANDOFF ($HANDOFF) -----"
+    cat "$HANDOFF"
+    echo "----- END HANDOFF -----"
 else
     echo "shipstack: No prior handoff for '$SLUG'. Fresh session."
+fi
+
+# Auto-load this project's Past Mistakes rules, only when the vault project
+# folder exists. A non-onboarded project prints nothing here and stays quiet.
+PM="$PROJECT_DIR/Past Mistakes and Lessons.md"
+if [ -d "$PROJECT_DIR" ] && [ -f "$PM" ]; then
+    RULES=$(grep '^- ' "$PM" 2>/dev/null)
+    if [ -n "$RULES" ]; then
+        echo "----- PAST MISTAKES: rules to apply this session (from $PM) -----"
+        echo "$RULES"
+        echo "----- END PAST MISTAKES -----"
+    fi
 fi
 
 # Check for active scope lock

@@ -87,10 +87,6 @@ fi
 echo $((NUDGES + 1)) > "$NUDGE_FILE"
 REASON="Code changed this session but no session journal was written yet. Before stopping: create $PROJECT_DIR/Sessions/$TODAY.md from the session-journal template (suffix -2 if one already exists for today), prepend a one-line entry to $PROJECT_DIR/Sessions.md, and add any new Decisions/ or Past Mistakes and Lessons.md entries this session warrants. Then finish your response."
 
-jq -n --arg reason "$REASON" '{
-  hookSpecificOutput: {
-    hookEventName: "Stop",
-    permissionDecision: "deny",
-    permissionDecisionReason: $reason
-  }
-}'
+# Stop hooks block with a top-level decision/reason object.
+# (hookSpecificOutput.permissionDecision is the PreToolUse shape and is ignored here.)
+jq -n --arg reason "$REASON" '{decision: "block", reason: $reason}'
