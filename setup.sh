@@ -37,8 +37,9 @@ mkdir -p "$HOOKS_DIR"
 cp "$SCRIPT_DIR/hooks/session-start-vault.sh" "$HOOKS_DIR/"
 cp "$SCRIPT_DIR/hooks/session-stop-vault.sh" "$HOOKS_DIR/"
 cp "$SCRIPT_DIR/hooks/guard.sh" "$HOOKS_DIR/"
+cp "$SCRIPT_DIR/hooks/handoff-stale-check.sh" "$HOOKS_DIR/"
 chmod +x "$HOOKS_DIR/"*.sh
-echo "[3/7] Hooks installed (session-start, session-stop, guard)"
+echo "[3/7] Hooks installed (session-start, session-stop, guard, handoff-stale-check)"
 
 # Step 4: Skills (symlink)
 SKILLS_DIR="$CLAUDE_DIR/skills/shipstack"

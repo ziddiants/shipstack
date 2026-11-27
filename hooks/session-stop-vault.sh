@@ -56,13 +56,40 @@ if [ "$NUDGES" -ge 2 ]; then
     exit 0
 fi
 
+# No start stamp for this project (the session started in another folder):
+# no work is known, so stay silent. Using 0 here made any old commit count as work.
+[ -f "$TS_FILE" ] || exit 0
+
 # Did work actually happen this session?
 SESSION_START_TS=$(cat "$TS_FILE" 2>/dev/null || echo 0)
 WORK_HAPPENED=false
+SNAP_FILE="$STATE_DIR/.session-start-git"
+# Same snapshot as session-start-vault.sh (path + content hash per uncommitted file).
+git_snapshot() {
+    local top
+    top=$(git -C "$1" rev-parse --show-toplevel 2>/dev/null) || return 0
+    { git -C "$top" ls-files -z -m -o -d --exclude-standard; git -C "$top" diff --cached --name-only -z; } 2>/dev/null \
+        | tr '\0' '\n' | sort -u | while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            if [ -f "$top/$f" ]; then
+                printf '%s\t%s\n' "$f" "$(git -C "$top" hash-object -- "$top/$f" 2>/dev/null)"
+            else
+                printf '%s\tDELETED\n' "$f"
+            fi
+        done
+    printf 'INDEX\t%s\n' "$(git -C "$top" diff --cached 2>/dev/null | shasum | cut -c1-40)"
+}
 if git -C "$CWD" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    if [ -n "$(git -C "$CWD" status --porcelain 2>/dev/null)" ]; then
+    if [ -f "$SNAP_FILE" ]; then
+        # Count only changes that are new since session start. Old uncommitted
+        # changes that are still the same do not count.
+        NEW_CHANGES=$(git_snapshot "$CWD" | sort | comm -13 <(sort "$SNAP_FILE") - | wc -l | tr -d ' ')
+        [ "$NEW_CHANGES" -gt 0 ] && WORK_HAPPENED=true
+    elif [ -n "$(git -C "$CWD" status --porcelain 2>/dev/null)" ]; then
+        # No snapshot (session started before this hook existed): old behaviour.
         WORK_HAPPENED=true
-    else
+    fi
+    if [ "$WORK_HAPPENED" != true ]; then
         LAST_COMMIT_TS=$(git -C "$CWD" log -1 --format=%ct 2>/dev/null || echo 0)
         [ "$LAST_COMMIT_TS" -gt "$SESSION_START_TS" ] && WORK_HAPPENED=true
     fi
